@@ -180,3 +180,10 @@ table.watch{width:100%;border-collapse:collapse;font-size:14px;min-width:820px}
 .risk.high{background:var(--danger-soft);color:var(--danger)}
 .risk.med{background:var(--warn-soft);color:var(--warn)}
 .risk.low{background:var(--safe-soft);color:var(--safe)}
+/* Homepage explore row */
+.explore{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.explore-card{display:grid;gap:4px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);backdrop-filter:blur(4px);text-decoration:none;color:var(--ink);transition:border-color .15s}
+.explore-card b{font-family:var(--f-display);font-size:17px;color:var(--sand)}
+.explore-card span{font-size:14px;color:var(--muted)}
+.explore-card:hover,.explore-card:focus-visible{border-color:var(--accent)}
+@media (max-width:760px){.explore{grid-template-columns:1fr}}

@@ -143,7 +143,7 @@ app.get("/demo/search", (_req, res) => {
     ...(listed ? [[`https://${listed}/`, "Customer Support - Account Verification", "This website is on today's public phishing list (Phishing.Database)."]] : [])
   ];
   res.type("html").send(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Demo search results | كن واعياً</title>
+<title>Demo search results | كن واعياً</title><link rel="icon" type="image/png" href="/assets/logo.png">
 <style>body{margin:0;font:15px/1.5 system-ui,sans-serif;background:#fff;color:#202124}main{max-width:720px;padding:16px}
 .banner{background:#ECE4D8;color:#2B2219;border-radius:10px;padding:10px 14px;margin-bottom:18px;font-size:14px}
 .q{border:1px solid #dadce0;border-radius:24px;padding:10px 18px;margin-bottom:18px;color:#5f6368}
@@ -151,7 +151,7 @@ app.get("/demo/search", (_req, res) => {
 .demo-result a{text-decoration:none}.demo-result h3{margin:2px 0;font-size:19px;font-weight:400;color:#1a0dab}
 .demo-result p{margin:0;font-size:14px;color:#4d5156}.ad{font-weight:700;font-size:12px;color:#202124;margin-inline-end:6px}</style>
 <script type="module" src="/js/demo-search.js"></script></head><body><main>
-<div class="banner"><b>Demo page.</b> Sample search results for presentations, not a real search engine. With the كن واعياً extension installed, each result gets a badge. Links on this page are disabled.</div>
+<div class="banner"><b>Demo page.</b> Sample search results, not a real search engine. The badges are what the كن واعياً browser extension adds to every result and ad on Google, Bing and DuckDuckGo. Click a badge for the full check. The sample links are disabled.</div>
 <div class="q">salik recharge · abu dhabi police fines · emirates nbd login</div>
 ${rows.map(([u, t, d], i) => `<div class="demo-result"><cite>${i === 1 || i === 3 ? '<span class="ad">Sponsored</span>' : ""}${esc(u)}</cite><a href="${esc(u)}"><h3>${esc(t)}</h3></a><p>${esc(d)}</p></div>`).join("\n")}
 </main></body></html>`);

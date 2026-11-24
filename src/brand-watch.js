@@ -25,6 +25,10 @@ import { listedEntries } from "./phish-lists.js";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const DIR = path.join(here, "..", "data", "watch");
 const FILE = path.join(DIR, "watch.json");
+// Results shipped with the code, so a fresh server (for example after a free host restarts it)
+// starts with a full list and only scans days it hasn't seen. Refresh it with:
+//   cp data/watch/watch.json data/watch-snapshot.json
+const SNAPSHOT = path.join(here, "..", "data", "watch-snapshot.json");
 
 // Organisations people in the UAE are most often tricked with. Keys are the brand keys in
 // public/js/url-analyzer.js (BRANDS); the display names come from there.
@@ -34,7 +38,7 @@ const MAX_CHECKS_PER_RUN = 300;
 
 const state = { items: new Map(), runs: { nrd: null, lists: null }, nrdDays: [], running: false };
 try {
-  const saved = JSON.parse(fs.readFileSync(FILE, "utf8"));
+  const saved = JSON.parse(fs.readFileSync(fs.existsSync(FILE) ? FILE : SNAPSHOT, "utf8"));
   for (const it of saved.items || []) state.items.set(it.domain, it);
   state.runs = { ...state.runs, ...(saved.runs || {}) };
   state.nrdDays = saved.nrdDays || [];
@@ -42,6 +46,9 @@ try {
 
 const keys = () => (process.env.WATCH_BRANDS ? process.env.WATCH_BRANDS.split(",").map(s => s.trim().toLowerCase()).filter(Boolean) : DEFAULT_KEYS);
 const wait = ms => new Promise(r => setTimeout(r, ms));
+// Scans cover hundreds of thousands of names. Pausing every few thousand lets website
+// requests through, so the site stays fast on a small server while the watch runs.
+const breathe = () => new Promise(r => setImmediate(r));
 
 function save() {
   try {
@@ -127,7 +134,9 @@ async function scanNewDomains(brands) {
     try {
       const names = await newDomainsFor(day);
       scanned += names.length;
+      let n = 0;
       for (const d of names) {
+        if (++n % 2000 === 0) await breathe();
         const brand = impersonatedBrand(d);
         if (!brand || !brands.has(brand)) continue;
         const it = note(d, brand, "Newly registered domain", day + "T00:00:00Z");
@@ -143,11 +152,12 @@ async function scanNewDomains(brands) {
 }
 
 // ---- source 2: public phishing lists ----
-function scanLists(brands) {
+async function scanLists(brands) {
   const { domains, urls } = listedEntries();
   const now = new Date().toISOString();
-  let found = 0;
+  let found = 0, n = 0;
   for (const d of domains) {
+    if (++n % 2000 === 0) await breathe();
     const brand = impersonatedBrand(d);
     if (brand && brands.has(brand)) { note(d, brand, "Phishing.Database", now); found++; }
   }
@@ -188,7 +198,7 @@ export async function runWatch({ includeNew = true } = {}) {
   state.running = true;
   try {
     const brands = watchedBrandNames();
-    scanLists(brands);
+    await scanLists(brands);
     if (includeNew) await scanNewDomains(brands);
     const checked = await scoreNew();
     save();

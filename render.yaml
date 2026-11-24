@@ -1,0 +1,24 @@
+# Render Blueprint: deploys the site as one free web service.
+# Render dashboard → New → Blueprint → choose this repository → Apply.
+services:
+  - type: web
+    name: be-aware-scam-shield
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci --omit=dev
+    startCommand: node src/server.js
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Render puts one proxy in front of the app; needed for per-visitor rate limits.
+      - key: TRUST_PROXY_HOPS
+        value: "1"
+      # Free on-server model for messages; set ANTHROPIC_API_KEY in Render to use Claude instead.
+      - key: ANALYSIS_ENGINE
+        value: local
+      # Password for changing a site's status on /watch (header x-watch-token). Render generates it.
+      - key: WATCH_TOKEN
+        generateValue: true
