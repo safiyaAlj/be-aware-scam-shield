@@ -33,7 +33,7 @@ const SNAPSHOT = path.join(here, "..", "data", "watch-snapshot.json");
 // Organisations people in the UAE are most often tricked with. Keys are the brand keys in
 // public/js/url-analyzer.js (BRANDS); the display names come from there.
 const DEFAULT_KEYS = ["adpolice", "abudhabipolice", "dubaipolice", "moi", "uaepass", "tamm", "icp", "salik", "rta", "dewa", "sewa", "addc",
-  "emiratesnbd", "adcb", "bankfab", "mashreq", "adib", "dib", "rakbank", "etisalat", "du", "emiratespost", "aramex", "noon", "careem", "talabat", "etihad", "carrefour", "sharerewards", "luluhypermarket", "lulu"];
+  "emiratesnbd", "adcb", "bankfab", "mashreq", "adib", "dib", "rakbank", "etisalat", "du", "emiratespost", "aramex", "noon", "careem", "talabat", "etihad", "carrefour", "sharerewards", "luluhypermarket", "lulu", "amazon"];
 const MAX_CHECKS_PER_RUN = 300;
 
 const state = { items: new Map(), runs: { nrd: null, lists: null }, nrdDays: [], running: false };
