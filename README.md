@@ -130,11 +130,11 @@ Without keys the site still works at no cost: pattern checks run, messages are a
 
 ## The كن واعياً challenge (game)
 
-The "Play the challenge" tab shows `public/game/index.html`, the original single-page كن واعياً awareness game (Arabic and English): spot the warning signs in a parcel text message and an Instagram recruitment ad, then choose the right action for a WhatsApp message. It is loaded only when the tab is opened, and can also be opened full screen at `/game/`.
+The "Play the challenge" tab shows `public/game/index.html`, the original single-page كن واعياً awareness game (Arabic and English): spot the warning signs in a parcel text message and an Instagram recruitment ad. It is loaded only when the tab is opened, and can also be opened full screen at `/game/`.
 
 This public version of the page:
 - collects no data: players' names and phone numbers are not sent anywhere (the name stays in the player's browser), and there is no leaderboard or prize draw;
-- has no organisation or sponsor branding and no deepfake video level (three scenarios, 600 points);
+- has no organisation or sponsor branding, and keeps two of the original levels: the parcel text message and the recruitment ad (400 points);
 - loads nothing from other websites (fonts come from `public/fonts/`).
 
 It has its own security policy (inline scripts allowed, may only be framed by this site), set in `src/server.js`.
