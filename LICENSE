@@ -1,0 +1,19 @@
+Copyright (c) 2026 Team Saif Surf: Alya Alghazal, Safiya Aljassmi, Mariam Alhammadi,
+Muhammad Albloshi. All rights reserved.
+
+This repository is shared publicly for evaluation in the ScamShield AI hackathon
+(42 Abu Dhabi × Abu Dhabi Police, November 2026). You may view the code and run it
+to evaluate the project. No permission is given to copy, modify, distribute,
+sublicense, or reuse this work or any part of it, including in other competitions
+or products, without prior written permission from the authors.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
+ARISING FROM THE USE OF THE SOFTWARE.
+
+---
+Third-party material keeps its own licence (see data/README.md):
+UCI SMS Spam Collection and PhiUSIIL Phishing URL Dataset (CC BY 4.0),
+Phishing.Database (MIT). The OpenPhish community feed downloaded at run time
+is for non-commercial use only. Fonts in public/fonts/ are under the SIL Open
+Font License 1.1 (public/fonts/OFL.txt).

@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.env
+*.zip
+data/feeds/
+.edge-demo-profile/
+data/watch/
+
+# Team-only material (kept locally, not published)
+docs/DEMO.md
+docs/SUBMISSION.md
+docs/PUBLISHING.md
+docs/pitch/
+docs/Project-Description.pdf
+docs/project-description.html
+docs/screenshots/bing-real-search.png
+docs/screenshots/challenge-phone.png
+docs/screenshots/search-badges.png

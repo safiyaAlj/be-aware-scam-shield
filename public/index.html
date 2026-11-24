@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>كن واعياً | Scam Check</title>
+<meta name="description" content="Check suspicious links, messages and screenshots for scams. A كن واعياً (Be Aware) awareness service.">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/css/app.css">
+<script type="module" src="/js/app.js"></script>
+<script type="module" src="/js/plexus.js"></script>
+</head>
+<body>
+<canvas id="plexus" aria-hidden="true"></canvas><div class="glow" aria-hidden="true"></div>
+<div class="wrap">
+  <header class="brand">
+    <!-- Put the official logo at public/assets/logo.png (hidden automatically if missing) -->
+    <img class="logo" src="/assets/logo.png" alt="كن واعياً" width="56" height="56">
+    <div>
+      <div class="eyebrow"><span lang="ar" dir="rtl">كن واعياً</span> · Be Aware</div>
+      <h1>Is this a scam?</h1>
+      <p class="lede">Check a suspicious link, message or screenshot before you click, pay or reply.</p>
+    </div>
+  </header>
+
+  <aside class="callout" aria-label="Contact the police">
+    <div><b>Not sure? Call 901</b><p>Police non-emergency line for questions about scams and to report one. In an emergency call 999.</p></div>
+    <span class="big-num">901</span>
+  </aside>
+
+  <nav class="tabs" role="tablist" aria-label="Choose a check">
+    <button class="tab" role="tab" id="tab-link" aria-controls="view-link" aria-selected="true">Check a link</button>
+    <button class="tab" role="tab" id="tab-message" aria-controls="view-message" aria-selected="false">Check a message</button>
+    <button class="tab" role="tab" id="tab-quiz" aria-controls="view-quiz" aria-selected="false">Play the challenge</button>
+  </nav>
+
+  <section class="panel" id="view-link" role="tabpanel" aria-labelledby="tab-link">
+    <form class="field" id="link-form">
+      <label class="lbl" for="url-in">Link to check</label>
+      <div class="row">
+        <input class="input grow" id="url-in" autocomplete="off" spellcheck="false" placeholder="https://..." value="http://rta-fines-uae.pay-portal.top/login?ref=AE8834">
+        <button class="btn primary" type="submit">Check link</button>
+      </div>
+      <div class="chips"><span class="hint">Try:</span>
+        <button type="button" class="chip" data-url="https://www.paypa1-account.com.secure-verify.xyz/signin">look-alike</button>
+        <button type="button" class="chip" data-url="https://bit.ly/3xK9pQz">short link</button>
+        <button type="button" class="chip" data-url="http://185.24.77.10/emiratesnbd/update.php">IP address</button>
+        <button type="button" class="chip" data-url="https://parcel-redelivery.click/download/Tracker.apk">app download</button>
+        <button type="button" class="chip" data-url="https://u.ae/en/information-and-services">official gov site</button>
+      </div>
+    </form>
+    <div class="result" id="link-result" aria-live="polite"></div>
+    <div class="ai">
+      <div class="ai-head">
+        <div><h3>Second opinion from AI</h3><p class="hint">AI reads the link's structure. It does not open the page.</p></div>
+        <button class="btn" id="link-ai-btn" type="button">Ask AI</button>
+      </div>
+      <div class="ai-out" id="link-ai-out" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="view-message" role="tabpanel" aria-labelledby="tab-message" hidden>
+    <div class="split">
+      <form class="field" id="msg-form">
+        <label class="lbl" for="msg-in">Message, SMS, WhatsApp or email text <span class="hint">(example loaded)</span></label>
+        <textarea id="msg-in" dir="auto">PARCEL NOTICE: Your package is on hold due to an unpaid customs fee (AED 7.50). Pay within 12 hours to avoid return to sender: https://uae-post-track.cfd/pay?id=AE2291</textarea>
+        <div class="drop">
+          <label class="btn" for="img-in">Add screenshot</label>
+          <input type="file" id="img-in" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+          <span class="file-name" id="img-name">No screenshot added</span>
+          <button type="button" class="chip" id="img-clear" hidden>Remove</button>
+        </div>
+        <div class="row">
+          <button class="btn primary" type="submit" id="msg-ai-btn">Analyze with AI</button>
+          <span class="hint">Remove names, account numbers and codes before pasting.</span>
+        </div>
+      </form>
+      <div class="qs" aria-live="polite">
+        <h3>Quick scan</h3>
+        <p class="hint">Warning signs found in the text. Updates as you type.</p>
+        <div class="qs-row" id="qs-tags"></div>
+        <div class="mini" id="qs-links"></div>
+      </div>
+    </div>
+    <div class="ai-out" id="msg-ai-out" aria-live="polite"></div>
+  </section>
+
+  <section class="panel" id="view-quiz" role="tabpanel" aria-labelledby="tab-quiz" hidden>
+    <div class="scorebar">
+      <div><h2><span lang="ar" dir="rtl">تحدي كن واعياً</span> · The Be Aware challenge</h2><p class="hint">Spot the warning signs in a text message, an Instagram ad and a WhatsApp message. Arabic and English.</p></div>
+      <span class="spacer"></span>
+      <a class="btn" href="/game/" target="_blank" rel="noopener">Open full screen</a>
+    </div>
+    <iframe class="game-frame" id="game-frame" title="تحدي كن واعياً · Be Aware challenge" data-src="/game/" allow="autoplay; clipboard-write"></iframe>
+  </section>
+
+  <section class="section" aria-labelledby="rules-h">
+    <h2 id="rules-h">Four rules that stop most scams</h2>
+    <div class="rules">
+      <div class="rule"><b>Never share codes</b><p>No bank, police officer or company will ask for your OTP, PIN, CVV or password. Anyone who asks is a scammer.</p></div>
+      <div class="rule"><b>Pressure means stop</b><p>"Within 12 hours", "avoid arrest", "account suspended". Urgency is there to stop you thinking.</p></div>
+      <div class="rule"><b>Go there yourself</b><p>Open the official app or type the website yourself. Call the number on the back of your card, not the one in the message.</p></div>
+      <div class="rule"><b>Read the real domain</b><p>Only the part just before the first single slash counts: in <span class="mono">bank.com.verify.xyz</span> the site is <span class="mono">verify.xyz</span>.</p></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="types-h">
+    <h2 id="types-h">Common scams right now</h2>
+    <div class="types">
+      <div class="type"><h3>Fake delivery fee</h3><p>An SMS says a parcel is held and asks for a small fee. The payment page steals your card details.</p><p class="tell">Tell: tiny amount, odd domain, a deadline.</p></div>
+      <div class="type"><h3>Fake fines and officials</h3><p>Messages or calls pretending to be police or a government office, claiming a fine or a legal case.</p><p class="tell">Tell: threats of arrest and payment through a link.</p></div>
+      <div class="type"><h3>Bank "security" call</h3><p>A caller says your card is blocked and asks for the code you're about to receive to "verify" you.</p><p class="tell">Tell: they ask for an OTP. Hang up.</p></div>
+      <div class="type"><h3>Task and job offers</h3><p>Easy money for liking videos or rating products. Small payouts at first, then you are asked to deposit money.</p><p class="tell">Tell: you pay to earn.</p></div>
+      <div class="type"><h3>Investment and crypto</h3><p>Guaranteed returns, celebrity endorsements and trading apps you can't withdraw from.</p><p class="tell">Tell: guaranteed profit.</p></div>
+      <div class="type"><h3>Prize or lottery</h3><p>You "won" a draw you never entered and must pay a processing fee or send ID copies.</p><p class="tell">Tell: pay to collect a prize.</p></div>
+      <div class="type"><h3>Account takeover</h3><p>A "friend" asks for the 6-digit code sent to you by mistake. It's your WhatsApp or email login code.</p><p class="tell">Tell: any request to forward a code.</p></div>
+      <div class="type"><h3>Fake apps (APK)</h3><p>A link asks you to install an app to track a parcel or pay a bill. The app reads your SMS and bank codes.</p><p class="tell">Tell: a download outside the app store.</p></div>
+    </div>
+  </section>
+
+  <section class="help" aria-labelledby="help-h">
+    <div class="section">
+      <h2 id="help-h">If you already clicked or paid</h2>
+      <ol>
+        <li><b>Call your bank now</b> using the number on your card. Ask them to block the card and stop or recall the transfer.</li>
+        <li><b>Secure your accounts.</b> Change passwords, turn on two-step verification and sign out of other devices.</li>
+        <li><b>Uninstall</b> any app the link made you download.</li>
+        <li><b>Keep evidence:</b> screenshots, phone numbers, links and transaction references.</li>
+        <li><b>Report it to the police</b> and warn your contacts if your account was used.</li>
+      </ol>
+    </div>
+    <div class="section">
+      <h3>Contact the police</h3>
+      <div class="contacts">
+        <div class="contact"><span>Scam questions and reports (non-emergency)</span><b>901</b></div>
+        <div class="contact"><span>Emergency</span><b>999</b></div>
+        <!-- TODO: add the official online reporting link / app here -->
+      </div>
+      <p class="hint">Reporting helps police warn others and trace the money, even if you lost a small amount.</p>
+    </div>
+  </section>
+
+  <footer>A <span lang="ar" dir="rtl">كن واعياً</span> (Be Aware) awareness service. Results are guidance only: a low score doesn't prove a link or message is safe. Text you submit is checked automatically, including by Google Safe Browsing and an AI service, and is not stored by this site. <a href="/privacy">Privacy</a> · <a href="/watch">Fake sites watch</a></footer>
+</div>
+</body>
+</html>

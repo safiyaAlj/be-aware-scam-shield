@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="popup.css">
+<script type="module" src="popup.js"></script>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">كن واعياً · Be Aware</div>
+    <h1>Scam Check</h1>
+  </header>
+  <section id="current">
+    <p class="label">This page</p>
+    <p class="host" id="cur-host">…</p>
+    <div class="verdict" id="cur-verdict"></div>
+    <ul class="flags" id="cur-flags"></ul>
+  </section>
+  <form id="form">
+    <label class="label" for="url">Check another link</label>
+    <input id="url" placeholder="Paste a link" autocomplete="off" spellcheck="false">
+    <button type="submit">Check with كن واعياً</button>
+  </form>
+  <div id="deep"></div>
+  <label class="toggle"><input type="checkbox" id="mark-search" checked> Mark risky results on Google, Bing and DuckDuckGo</label>
+  <footer>Not sure? Call <b>901</b> (non-emergency) · Emergency <b>999</b></footer>
+</body>
+</html>

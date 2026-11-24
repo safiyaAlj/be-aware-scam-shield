@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "كن واعياً Scam Check",
+  "short_name": "Scam Check",
+  "version": "1.1.0",
+  "description": "Marks scam and phishing links in Google, Bing and DuckDuckGo results, warns about suspicious websites, and checks any link with كن واعياً (Be Aware).",
+  "action": {
+    "default_title": "Scam Check",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "tabs",
+    "contextMenus",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://YOUR-SERVER-DOMAIN/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.google.com/search*",
+        "https://www.google.ae/search*",
+        "https://www.google.co.uk/search*",
+        "https://www.bing.com/search*",
+        "https://duckduckgo.com/*"
+      ],
+      "js": [
+        "search-badges.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

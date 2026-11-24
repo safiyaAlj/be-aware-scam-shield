@@ -1,0 +1,135 @@
+# Real UAE websites, used only to measure false alarms (scripts/evaluate-links.mjs).
+# Any that also appear in the training data are skipped automatically.
+# Government
+u.ae
+adpolice.gov.ae
+dubaipolice.gov.ae
+moi.gov.ae
+icp.gov.ae
+mohre.gov.ae
+mohap.gov.ae
+moe.gov.ae
+mof.gov.ae
+moec.gov.ae
+mofa.gov.ae
+mocd.gov.ae
+moccae.gov.ae
+uaecabinet.ae
+tamm.abudhabi
+dha.gov.ae
+doh.gov.ae
+adek.gov.ae
+khda.gov.ae
+dm.gov.ae
+dewa.gov.ae
+sewa.gov.ae
+rta.ae
+itc.gov.ae
+dubaicustoms.gov.ae
+tdra.gov.ae
+centralbank.ae
+sca.gov.ae
+wam.ae
+# Energy, investment, property
+adnoc.ae
+enoc.com
+mubadala.com
+adq.ae
+dpworld.com
+emaar.com
+aldar.com
+nakheel.com
+damacproperties.com
+meraas.com
+dubaiholding.com
+taqa.com
+empower.ae
+# Banks and payments
+emiratesnbd.com
+adcb.com
+bankfab.com
+mashreq.com
+dib.ae
+adib.ae
+rakbank.ae
+cbd.ae
+nbf.ae
+emiratesislamic.ae
+alhilalbank.ae
+ajmanbank.ae
+hsbc.ae
+wio.io
+network.ae
+# Telecoms
+etisalat.ae
+eand.com
+du.ae
+virginmobile.ae
+# Travel and transport
+emirates.com
+etihad.com
+flydubai.com
+airarabia.com
+dubaiairports.ae
+salik.ae
+careem.com
+uber.com
+# Shopping and delivery
+noon.com
+amazon.ae
+carrefouruae.com
+luluhypermarket.com
+sharafdg.com
+namshi.com
+centrepointstores.com
+ikea.com
+aramex.com
+emiratespost.ae
+talabat.com
+deliveroo.ae
+# News
+khaleejtimes.com
+gulfnews.com
+thenationalnews.com
+alkhaleej.ae
+albayan.ae
+emaratalyoum.com
+alittihad.ae
+zawya.com
+timeoutdubai.com
+# Universities
+uaeu.ac.ae
+ku.ac.ae
+zu.ac.ae
+hct.ac.ae
+aus.edu
+aud.edu
+sorbonne.ae
+# Health
+seha.ae
+clevelandclinicabudhabi.ae
+mediclinic.ae
+nmc.ae
+asterdmhealthcare.com
+# Property listings
+bayut.com
+propertyfinder.ae
+dubizzle.com
+# Tourism and leisure
+visitdubai.com
+visitabudhabi.ae
+expocitydubai.com
+thedubaimall.com
+malloftheemirates.com
+yasisland.com
+louvreabudhabi.ae
+ferrariworldabudhabi.com
+dubaiparksandresorts.com
+# Common subdomains of real services
+online.adcb.com
+secure.etisalat.ae
+myaccount.du.ae
+smartservices.icp.gov.ae
+customers.salik.ae
+login.microsoftonline.com
+accounts.google.com
