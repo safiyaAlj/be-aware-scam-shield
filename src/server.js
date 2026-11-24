@@ -10,25 +10,34 @@ import { startPhishLists, sampleListedDomain } from "./phish-lists.js";
 import { startWatch, watchItems, setStatus } from "./brand-watch.js";
 import { AnalysisError } from "./claude.js";
 import { analyze, analysisEngine } from "./analyze.js";
-import { whatsappRouter } from "./whatsapp.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS || 1)); // behind a reverse proxy / load balancer
 
-// Optional password for the whole site (for example before a public launch).
-// Set SITE_PASSWORD (and optionally SITE_USER, default "be-aware") to turn it on; remove it to open the site.
-// The health check and the WhatsApp webhook stay open: the host and Meta can't log in.
-const SITE_PASSWORD = process.env.SITE_PASSWORD || "";
-const SITE_USER = process.env.SITE_USER || "be-aware";
 const sameText = (a, b) => {
   const x = Buffer.from(String(a)), y = Buffer.from(String(b));
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 };
+
+// Trusted apps (for example a separate chat bot) send one of TRUSTED_API_KEYS (comma-separated)
+// in the x-api-key header. All their users arrive from one server, so per-visitor limits and the
+// optional site password don't apply to them.
+const API_KEYS = (process.env.TRUSTED_API_KEYS || "").split(",").map(s => s.trim()).filter(k => k.length >= 16);
+const trustedClient = req => {
+  const key = req.get("x-api-key") || "";
+  return key.length > 0 && API_KEYS.some(k => sameText(k, key));
+};
+
+// Optional password for the whole site (for example before a public launch).
+// Set SITE_PASSWORD (and optionally SITE_USER, default "be-aware") to turn it on; remove it to open the site.
+// The health check stays open so the host can see the site is up.
+const SITE_PASSWORD = process.env.SITE_PASSWORD || "";
+const SITE_USER = process.env.SITE_USER || "be-aware";
 if (SITE_PASSWORD) {
   app.use((req, res, next) => {
-    if (req.path === "/healthz" || req.path.startsWith("/webhooks/")) return next();
+    if (req.path === "/healthz" || trustedClient(req)) return next();
     const [scheme, encoded] = (req.get("authorization") || "").split(" ");
     if (scheme === "Basic" && encoded) {
       const decoded = Buffer.from(encoded, "base64").toString("utf8");
@@ -39,8 +48,8 @@ if (SITE_PASSWORD) {
   });
 }
 
-// Keep the raw body for WhatsApp signature checks; allow screenshots up to ~5 MB.
-app.use(express.json({ limit: "8mb", verify: (req, _res, buf) => { req.rawBody = buf; } }));
+// Allow screenshots up to ~5 MB.
+app.use(express.json({ limit: "8mb" }));
 
 // Basic security headers.
 app.use((_req, res, next) => {
@@ -64,8 +73,8 @@ app.use("/api", (req, res, next) => {
   next();
 });
 
-const linkLimiter = rateLimit({ windowMs: 60_000, limit: 30, standardHeaders: "draft-7", legacyHeaders: false });
-const aiLimiter = rateLimit({ windowMs: 60_000, limit: 6, standardHeaders: "draft-7", legacyHeaders: false,
+const linkLimiter = rateLimit({ windowMs: 60_000, limit: 30, standardHeaders: "draft-7", legacyHeaders: false, skip: trustedClient });
+const aiLimiter = rateLimit({ windowMs: 60_000, limit: 6, standardHeaders: "draft-7", legacyHeaders: false, skip: trustedClient,
   message: { error: "rate_limited", message: "Too many checks. Please wait a minute and try again." } });
 
 app.get("/healthz", (_req, res) => res.json({ ok: true }));
@@ -83,7 +92,7 @@ app.post("/api/check-url", linkLimiter, async (req, res) => {
 
 // Batch link check for the browser extension's search-result badges (one call per results page).
 // Returns a short summary per link, in the same order. Search words are never sent, only result links.
-const batchLimiter = rateLimit({ windowMs: 60_000, limit: 20, standardHeaders: "draft-7", legacyHeaders: false });
+const batchLimiter = rateLimit({ windowMs: 60_000, limit: 20, standardHeaders: "draft-7", legacyHeaders: false, skip: trustedClient });
 app.post("/api/check-urls", batchLimiter, async (req, res) => {
   const urls = Array.isArray(req.body?.urls) ? req.body.urls.slice(0, 25).map(u => String(u || "").slice(0, 2048)) : [];
   if (!urls.length) return res.status(400).json({ error: "missing_urls" });
@@ -190,7 +199,6 @@ app.use("/game", (_req, res, next) => {
   next();
 });
 
-app.use("/webhooks/whatsapp", whatsappRouter());
 // Pages, styles and scripts are re-checked on every load (cheap: unchanged files return 304),
 // so after an update a browser never mixes a new page with an old stylesheet.
 // Fonts and images rarely change and are cached for a day.

@@ -1,6 +1,6 @@
 // Free scam analysis that runs entirely on this server: the trained classifier,
 // the keyword signs and the link checks, combined into the same result shape
-// that analyzeWithClaude() returns, so the website and WhatsApp bot can show either.
+// that analyzeWithClaude() returns, so the website (and apps using the API) can show either.
 import { SIGNS } from "../public/js/url-analyzer.js";
 import { classify } from "./local-model/classifier.js";
 import { AnalysisError } from "./claude.js";

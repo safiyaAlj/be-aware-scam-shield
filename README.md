@@ -14,7 +14,7 @@ Built by **team Saif Surf** (Alya Alghazal, Safiya Aljassmi, Mariam Alhammadi, M
 | Layer | What people get | Where the code is |
 |---|---|---|
 | 1 · Early warning | A public list of fake sites copying UAE government services, banks, telecoms, couriers and apps, found before anyone reports them; organisations and authorities can export it to have the sites taken down | `src/brand-watch.js`, `public/watch.html` |
-| 2 · At the click | Badges on search results (extension); a link and message checker website; a WhatsApp bot | `extension/`, `public/`, `src/whatsapp.js` |
+| 2 · At the click | Badges on search results (extension); a link and message checker website | `extension/`, `public/` |
 | 3 · Awareness | The كن واعياً challenge: a game in Arabic and English for all ages | `public/game/` |
 
 **Measured on data it never trained on** (24 Nov 2026, `npm run evaluate`, [docs/EVALUATION.md](docs/EVALUATION.md)): without any phishing list, 62 of 111 live phishing sites flagged (56%) and 0 of 64 real UAE websites wrongly flagged; 0.3 ms per link. In 14 days of newly registered domains (980,000) the watch found look-alikes such as `salik.sbs`, `dubai-rta.cfd` and `talabatvip.world`.
@@ -103,7 +103,7 @@ Certificate Transparency (crt.sh) was tried as a source but its keyword search r
 
 ### The free local model
 
-`npm run train` trains it from the labelled examples in [data/](data/README.md) and saves it to `src/local-model/model.json`, which is committed so the server works without training first. It currently learns from a public English SMS spam set and about 100 invented Arabic and English UAE-style examples. Its accuracy on held-out examples is 98% on the public set but has only been measured on 20 local examples. Before relying on it publicly, add real reported messages (with personal details removed) and retrain. It can't read screenshots: the website hides the screenshot button and the WhatsApp bot asks for the text instead.
+`npm run train` trains it from the labelled examples in [data/](data/README.md) and saves it to `src/local-model/model.json`, which is committed so the server works without training first. It currently learns from a public English SMS spam set and about 100 invented Arabic and English UAE-style examples. Its accuracy on held-out examples is 98% on the public set but has only been measured on 20 local examples. Before relying on it publicly, add real reported messages (with personal details removed) and retrain. It can't read screenshots: the website hides the screenshot button and asks for the text instead.
 
 The same pattern-check file is used by the website, the server and the extension, so all three always agree.
 
@@ -126,7 +126,7 @@ Without keys the site still works at no cost: pattern checks run, messages are a
 |---|---|
 | `ANTHROPIC_API_KEY` | Optional, paid. console.anthropic.com → API keys (an organisation account, not a personal one). Without it the free local model is used |
 | `GOOGLE_SAFE_BROWSING_KEY` | Google Cloud Console → enable **Safe Browsing API** → Credentials → API key. Restrict the key to that API and to the server's IP |
-| `WHATSAPP_*` | Meta for Developers: a WhatsApp Business app with the Cloud API (phone number id, access token, app secret, and a verify token you choose for the webhook) |
+| `TRUSTED_API_KEYS` | Optional. Comma-separated keys (16+ characters) for trusted apps that call the API for many users from one server, such as a chat bot. Sent in the `x-api-key` header; they skip the per-visitor limits and the site password |
 
 ## The كن واعياً challenge (game)
 
@@ -154,7 +154,7 @@ Then open `edge://extensions` (or `chrome://extensions`), turn on Developer mode
 
 ## Deploying on the server
 
-To keep the whole site behind a password (for example before launch), set `SITE_PASSWORD` (and optionally `SITE_USER`, default `be-aware`); the browser then asks for them. Remove the setting to open the site. `/healthz` and the WhatsApp webhook stay open.
+To keep the whole site behind a password (for example before launch), set `SITE_PASSWORD` (and optionally `SITE_USER`, default `be-aware`); the browser then asks for them. Remove the setting to open the site. `/healthz` stays open, and apps with a trusted API key can still call the API.
 
 
 1. Run `npm ci --omit=dev` and start `node src/server.js` under a process manager (systemd, PM2, or a container).
@@ -170,7 +170,6 @@ Endpoints:
 | `POST` | `/api/check-url` | `{ "url": "..." }` → pattern checks + short-link expansion + phishing lists + phishing-address model + Safe Browsing. 30 per minute per IP |
 | `POST` | `/api/analyze` | `{ "text": "...", "image": { "mediaType": "image/png", "data": "<base64>" } }` → verdict from the local model or AI. 6 per minute per IP |
 | `GET` | `/api/config` | `{ "engine": "local" \| "claude" }`, used by the page to hide AI-only features |
-| `GET/POST` | `/webhooks/whatsapp` | WhatsApp Cloud API webhook (signature-verified) |
 
 ## Before going public: approvals and decisions
 
@@ -178,8 +177,8 @@ Endpoints:
 - **Google terms.** The Safe Browsing Lookup API is licensed for non-commercial use. Confirm that a free public community service qualifies, or switch to Google Cloud **Web Risk**, which takes the same request shape.
 - **AI model and cost.** The default model is `claude-opus-5-5`, the most accurate option. For high public volume you can set `CLAUDE_MODEL` to a cheaper model after testing it on real examples.
 - **Content review.** Have the awareness content, quiz and the privacy notice (`public/privacy.html`, currently a draft) reviewed. Add the official logo at `public/assets/logo.png` and the brand colour in `public/css/app.css` (`--accent`).
-- **Arabic.** AI answers and WhatsApp replies follow the user's language. The website interface is English only for now. A full Arabic version is the recommended next step.
+- **Arabic.** Message checks answer in the user's language. The website interface is English only for now. A full Arabic version is the recommended next step.
 
-## Publishing the extension and WhatsApp bot
+## Publishing the extension
 
-Build the extension with `EXTENSION_API_BASE=https://<your server> npm run build:extension` and publish `dist/extension` through the Chrome Web Store and Microsoft Edge Add-ons with an organisational account. The WhatsApp bot needs a verified WhatsApp Business account; set the `WHATSAPP_*` values in `.env` and point the webhook at `/webhooks/whatsapp`.
+Build the extension with `EXTENSION_API_BASE=https://<your server> npm run build:extension` and publish `dist/extension` through the Chrome Web Store and Microsoft Edge Add-ons with an organisational account.
