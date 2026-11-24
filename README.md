@@ -171,13 +171,9 @@ Endpoints:
 | `POST` | `/api/analyze` | `{ "text": "...", "image": { "mediaType": "image/png", "data": "<base64>" } }` → verdict from the local model or AI. 6 per minute per IP |
 | `GET` | `/api/config` | `{ "engine": "local" \| "claude" }`, used by the page to hide AI-only features |
 
-## Before going public: approvals and decisions
+## Privacy
 
-- **Data protection.** With the free local model, message text stays on the server. With Claude AI, submitted messages are sent to Anthropic and links to Google (Safe Browsing). Both are outside the UAE. Get sign-off from legal, information security and data protection, under UAE federal data law and any government cloud policy that applies. If data must stay in a region, ask Anthropic about regional options, including Claude on Amazon Bedrock or Google Vertex AI, and confirm what is available for your required region.
-- **Google terms.** The Safe Browsing Lookup API is licensed for non-commercial use. Confirm that a free public community service qualifies, or switch to Google Cloud **Web Risk**, which takes the same request shape.
-- **AI model and cost.** The default model is `claude-opus-5-5`, the most accurate option. For high public volume you can set `CLAUDE_MODEL` to a cheaper model after testing it on real examples.
-- **Content review.** Have the awareness content, quiz and the privacy notice (`public/privacy.html`, currently a draft) reviewed. Add the official logo at `public/assets/logo.png` and the brand colour in `public/css/app.css` (`--accent`).
-- **Arabic.** Message checks answer in the user's language. The website interface is English only for now. A full Arabic version is the recommended next step.
+Links and messages people check are analysed on this server and are not stored; the logs hold only error codes. To find a website's age, only its main domain name (for example `example.com`, never the full link) is looked up with the domain's official registry. The phishing lists and the list of new domains are downloaded to the server, so no link anyone checks is sent to them. Search words are never sent by the extension, only result links, and only to this server.
 
 ## Publishing the extension
 
