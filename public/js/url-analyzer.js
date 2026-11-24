@@ -26,7 +26,8 @@ const BRANDS = [
   ["Salik","salik",["salik.ae"]],["RTA","rta",["rta.ae"]],["TAMM","tamm",["tamm.abudhabi","abudhabi.ae"]],["ICP","icp",["icp.gov.ae"]],
   ["ADIB","adib",["adib.ae","adib.com"]],["Dubai Islamic Bank","dib",["dib.ae"]],["RAKBANK","rakbank",["rakbank.ae"]],["du","du",["du.ae"]],
   ["ADDC","addc",["addc.ae"]],["Etihad","etihad",["etihad.com"]],
-  ["Carrefour","carrefour",["carrefouruae.com","mafcarrefour.com","carrefour.com","carrefour.fr","carrefour.es","carrefour.it","carrefour.be","carrefour.pl","carrefour.ro","carrefour.com.br","carrefour.com.ar","carrefour.com.tw","carrefourksa.com","carrefouregypt.com","carrefourjordan.com","carrefourqatar.com","carrefourkuwait.com","carrefourbahrain.com","carrefouroman.com","carrefourpakistan.com","carrefourkenya.com"]],["SHARE rewards","sharerewards",["sharerewards.com"]]
+  ["Carrefour","carrefour",["carrefouruae.com","mafcarrefour.com","carrefour.com","carrefour.fr","carrefour.es","carrefour.it","carrefour.be","carrefour.pl","carrefour.ro","carrefour.com.br","carrefour.com.ar","carrefour.com.tw","carrefourksa.com","carrefouregypt.com","carrefourjordan.com","carrefourqatar.com","carrefourkuwait.com","carrefourbahrain.com","carrefouroman.com","carrefourpakistan.com","carrefourkenya.com"]],["SHARE rewards","sharerewards",["sharerewards.com"]],
+  ["LuLu Hypermarket","luluhypermarket",["luluhypermarket.com","luluretail.com","lulugroupinternational.com","luluexchange.com","lulumoney.app","lulumall.in"]],["LuLu","lulu",["luluhypermarket.com","luluretail.com","lulugroupinternational.com","luluexchange.com","lulumoney.app","lulumall.in"]]
 ];
 const KEYWORDS = ["login","signin","verify","secure","update","account","confirm","wallet","bank","pay","fine","refund","prize","gift","otp","unlock","suspend","customs","redeliver","claim","reward"];
 
