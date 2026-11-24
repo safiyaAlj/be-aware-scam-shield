@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { messageSigns, extractUrls } from "../public/js/url-analyzer.js";
 import { checkLinkCached as checkLink, cacheStats } from "./check-link.js";
@@ -15,6 +16,28 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS || 1)); // behind a reverse proxy / load balancer
+
+// Optional password for the whole site (for example before a public launch).
+// Set SITE_PASSWORD (and optionally SITE_USER, default "be-aware") to turn it on; remove it to open the site.
+// The health check and the WhatsApp webhook stay open: the host and Meta can't log in.
+const SITE_PASSWORD = process.env.SITE_PASSWORD || "";
+const SITE_USER = process.env.SITE_USER || "be-aware";
+const sameText = (a, b) => {
+  const x = Buffer.from(String(a)), y = Buffer.from(String(b));
+  return x.length === y.length && crypto.timingSafeEqual(x, y);
+};
+if (SITE_PASSWORD) {
+  app.use((req, res, next) => {
+    if (req.path === "/healthz" || req.path.startsWith("/webhooks/")) return next();
+    const [scheme, encoded] = (req.get("authorization") || "").split(" ");
+    if (scheme === "Basic" && encoded) {
+      const decoded = Buffer.from(encoded, "base64").toString("utf8");
+      const i = decoded.indexOf(":");
+      if (i > 0 && sameText(decoded.slice(0, i), SITE_USER) & sameText(decoded.slice(i + 1), SITE_PASSWORD)) return next();
+    }
+    res.set("WWW-Authenticate", 'Basic realm="Be Aware Scam Shield", charset="UTF-8"').status(401).send("Password required.");
+  });
+}
 
 // Keep the raw body for WhatsApp signature checks; allow screenshots up to ~5 MB.
 app.use(express.json({ limit: "8mb", verify: (req, _res, buf) => { req.rawBody = buf; } }));

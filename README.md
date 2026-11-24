@@ -154,6 +154,9 @@ Then open `edge://extensions` (or `chrome://extensions`), turn on Developer mode
 
 ## Deploying on the server
 
+To keep the whole site behind a password (for example before launch), set `SITE_PASSWORD` (and optionally `SITE_USER`, default `be-aware`); the browser then asks for them. Remove the setting to open the site. `/healthz` and the WhatsApp webhook stay open.
+
+
 1. Run `npm ci --omit=dev` and start `node src/server.js` under a process manager (systemd, PM2, or a container).
 2. Put it behind the existing reverse proxy with HTTPS on the project's official domain. Set `TRUST_PROXY_HOPS` to the number of proxies so rate limits see real client IPs.
 3. The server must reach these addresses outbound: `api.anthropic.com`, `safebrowsing.googleapis.com`, `graph.facebook.com`, `raw.githubusercontent.com` (phishing lists) and the URL shortener domains (for short-link expansion).
