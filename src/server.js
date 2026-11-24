@@ -126,7 +126,8 @@ app.post("/api/analyze", aiLimiter, async (req, res) => {
 
   try {
     const links = (await Promise.all(extractUrls(text).map(u => checkLink(u)))).filter(r => r && r.valid);
-    const analysis = await analyze({ text, image, signs: messageSigns(text), links });
+    const lang = req.body?.lang === "ar" || req.body?.lang === "en" ? req.body.lang : undefined; // the page's language
+    const analysis = await analyze({ text, image, signs: messageSigns(text), links, lang });
     res.json({ analysis, links });
   } catch (err) {
     const code = err instanceof AnalysisError ? err.code : "upstream";
@@ -162,10 +163,19 @@ app.post("/api/watch/status", (req, res) => {
 
 // Demo results page for presentations: the extension marks these like real search results.
 // Links are disabled on the page (public/js/demo-search.js) so nobody opens a scam site by accident.
-app.get("/demo/search", (_req, res) => {
+app.get("/demo/search", (req, res) => {
+  const ar = req.query.lang === "ar";
   const listed = sampleListedDomain();
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const rows = [
+  const rows = ar ? [
+    ["https://www.salik.ae/ar", "سالك - اشحن حسابك", "الموقع الرسمي لسالك. اطّلع على رصيدك أو اشحنه، وأضف مركبة أو فعّل الدفع التلقائي."],
+    ["https://salik-ae-topup.shop/pay", "شحن سالك الفوري - مكافأة 50%", "اشحن بطاقة سالك عبر الإنترنت في ثوانٍ. رصيد إضافي لفترة محدودة لجميع السائقين في الإمارات."],
+    ["https://www.adpolice.gov.ae/ar", "شرطة أبوظبي - دفع المخالفات المرورية", "الخدمات الرسمية لشرطة أبوظبي: المخالفات المرورية والتقارير والخدمات الإلكترونية."],
+    ["https://adpolice-fines.top/pay?ref=AE-2291", "مخالفات شرطة أبوظبي - ادفع الآن وتجنّب النقاط السوداء", "ادفع مخالفتك المتأخرة اليوم بخصم 50%. تجنّب حجز المركبة."],
+    ["https://emiratesnbd-login.web.app/", "بنك الإمارات دبي الوطني - تسجيل دخول آمن", "سجّل الدخول للتحقق من حسابك وتجنّب إيقاف بطاقتك."],
+    ["https://www.emiratesnbd.com/ar", "بنك الإمارات دبي الوطني - الخدمات المصرفية للأفراد", "الحسابات والبطاقات والقروض والخدمات المصرفية الرقمية من بنك الإمارات دبي الوطني."],
+    ...(listed ? [[`https://${listed}/`, "خدمة العملاء - التحقق من الحساب", "هذا الموقع مدرج في قائمة التصيد العامة لهذا اليوم (Phishing.Database)."]] : [])
+  ] : [
     ["https://www.salik.ae/en", "Salik - Recharge your account", "Official Salik website. Check or recharge your balance, add a vehicle or set up automatic payments."],
     ["https://salik-ae-topup.shop/pay", "Salik Top Up - Instant Recharge 50% Bonus", "Recharge your Salik tag online in seconds. Limited time bonus credit for all UAE drivers."],
     ["https://www.adpolice.gov.ae/en", "Abu Dhabi Police - Pay traffic fines", "Official Abu Dhabi Police services: traffic fines, reports and e-services."],
@@ -174,18 +184,18 @@ app.get("/demo/search", (_req, res) => {
     ["https://www.emiratesnbd.com/en", "Emirates NBD - Personal Banking", "Accounts, cards, loans and digital banking from Emirates NBD."],
     ...(listed ? [[`https://${listed}/`, "Customer Support - Account Verification", "This website is on today's public phishing list (Phishing.Database)."]] : [])
   ];
-  res.type("html").send(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Demo search results | كن واعياً</title><link rel="icon" type="image/png" href="/assets/logo.png">
+  res.type("html").send(`<!doctype html><html lang="${ar ? "ar" : "en"}" dir="${ar ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${ar ? "تجربة نتائج البحث" : "Demo search results"} | كن واعياً</title><link rel="icon" type="image/png" href="/assets/logo.png">
 <style>body{margin:0;font:15px/1.5 system-ui,sans-serif;background:#fff;color:#202124}main{max-width:720px;padding:16px}
 .banner{background:#ECE4D8;color:#2B2219;border-radius:10px;padding:10px 14px;margin-bottom:18px;font-size:14px}
 .q{border:1px solid #dadce0;border-radius:24px;padding:10px 18px;margin-bottom:18px;color:#5f6368}
 .demo-result{margin:0 0 26px}.demo-result cite{display:block;font-style:normal;font-size:13px;color:#4d5156;overflow-wrap:anywhere}
 .demo-result a{text-decoration:none}.demo-result h3{margin:2px 0;font-size:19px;font-weight:400;color:#1a0dab}
-.demo-result p{margin:0;font-size:14px;color:#4d5156}.ad{font-weight:700;font-size:12px;color:#202124;margin-inline-end:6px}</style>
+.demo-result p{margin:0;font-size:14px;color:#4d5156}.demo-result cite{direction:ltr;text-align:start;unicode-bidi:plaintext}.banner a{color:#2B2219;font-weight:700;margin-inline-start:8px}.ad{font-weight:700;font-size:12px;color:#202124;margin-inline-end:6px}</style>
 <script type="module" src="/js/demo-search.js"></script></head><body><main>
-<div class="banner"><b>Demo page.</b> Sample search results, not a real search engine. The badges are what the كن واعياً browser extension adds to every result and ad on Google, Bing and DuckDuckGo. Click a badge for the full check. The sample links are disabled.</div>
-<div class="q">salik recharge · abu dhabi police fines · emirates nbd login</div>
-${rows.map(([u, t, d], i) => `<div class="demo-result"><cite>${i === 1 || i === 3 ? '<span class="ad">Sponsored</span>' : ""}${esc(u)}</cite><a href="${esc(u)}"><h3>${esc(t)}</h3></a><p>${esc(d)}</p></div>`).join("\n")}
+<div class="banner">${ar ? "<b>صفحة تجريبية.</b> نتائج بحث نموذجية وليست محرك بحث حقيقياً. الشارات هي ما تضيفه إضافة المتصفح من كن واعياً إلى كل نتيجة وإعلان في Google و Bing و DuckDuckGo. اضغط على الشارة لرؤية الفحص الكامل. الروابط النموذجية معطّلة." : "<b>Demo page.</b> Sample search results, not a real search engine. The badges are what the كن واعياً browser extension adds to every result and ad on Google, Bing and DuckDuckGo. Click a badge for the full check. The sample links are disabled."}<a href="/demo/search?lang=${ar ? "en" : "ar"}">${ar ? "English" : "عربي"}</a></div>
+<div class="q">${ar ? "شحن سالك · مخالفات شرطة أبوظبي · تسجيل دخول الإمارات دبي الوطني" : "salik recharge · abu dhabi police fines · emirates nbd login"}</div>
+${rows.map(([u, t, d], i) => `<div class="demo-result"><cite>${i === 1 || i === 3 ? `<span class="ad">${ar ? "إعلان" : "Sponsored"}</span>` : ""}${esc(u)}</cite><a href="${esc(u)}"><h3>${esc(t)}</h3></a><p>${esc(d)}</p></div>`).join("\n")}
 </main></body></html>`);
 });
 

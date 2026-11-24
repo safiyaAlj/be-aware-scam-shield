@@ -4,20 +4,22 @@
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Privacy | Scam Check | كن واعياً</title>
+<title data-i18n="privacy.title">Privacy | Scam Check | كن واعياً</title>
+<script src="/js/lang.js"></script>
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="/css/app.css">
 <script type="module" src="/js/plexus.js"></script>
+<script type="module" src="/js/i18n.js"></script>
 </head>
 <body>
 <canvas id="plexus" aria-hidden="true"></canvas><div class="glow" aria-hidden="true"></div>
 <main class="wrap" style="max-width:720px">
-  <header>
+  <header data-lang="en">
     <div class="eyebrow"><span lang="ar" dir="rtl">كن واعياً</span> · Be Aware</div>
     <h1>Scam Check privacy notice</h1>
     <p class="lede">Last updated: 24 November 2026</p>
   </header>
-  <section class="section">
+  <section class="section" data-lang="en">
     <h2>What you send us</h2>
     <p>When you check a link, message or screenshot on the website or in the browser extension, we receive only what you choose to submit.</p>
     <h2>How it is checked</h2>
@@ -33,6 +35,28 @@
     <h2>Contact</h2>
     <p>Questions about scams or this service: call the police on 901 (non-emergency). Emergency: 999. For questions about this service, contact the team through the project page on GitHub (github.com/safiyaalj/be-aware-scam-shield).</p>
   </section>
+  <header data-lang="ar" hidden>
+    <div class="eyebrow">كن واعياً</div>
+    <h1>إشعار الخصوصية لخدمة فحص الاحتيال</h1>
+    <p class="lede">آخر تحديث: 24 نوفمبر 2026</p>
+  </header>
+  <section class="section" data-lang="ar" hidden>
+    <h2>ما الذي ترسله إلينا</h2>
+    <p>عندما تفحص رابطاً أو رسالة أو لقطة شاشة عبر الموقع أو إضافة المتصفح، نستلم فقط ما تختار إرساله.</p>
+    <h2>كيف يتم الفحص</h2>
+    <p>تُقارَن الروابط على خادمنا بأنماط الاحتيال المعروفة، وبالقوائم العامة لمواقع التصيد المبلّغ عنها (تُنزَّل هذه القوائم إلى خادمنا، فلا يُرسَل رابطك إليها)، وبنموذج آلي. وإذا كانت الخدمة مفعّلة، تُفحص الروابط أيضاً عبر Google Safe Browsing. ولمعرفة عمر الموقع، يُستعلم عن اسم النطاق الرئيسي فقط (مثل example.com، وليس الرابط كاملاً أبداً) لدى سجل النطاق الرسمي. أما الرسائل التي تطلب فحصها فيفحصها خادمنا بنموذجنا وقواعدنا الخاصة. ولا تُرسَل الرسائل ولقطات الشاشة إلى خدمة الذكاء الاصطناعي الاختيارية (Anthropic) إلا إذا كانت مفعّلة، وفي هذه الحالة يعالج المزوّد المحتوى فقط لإرجاع النتيجة إلينا.</p>
+    <h2>ما الذي نحتفظ به</h2>
+    <p>لا تخزّن خدمة فحص الاحتيال المحتوى الذي ترسله. تحتفظ خوادمنا بسجلات تقنية (الوقت ورموز الأخطاء) دون محتوى الرسائل.</p>
+    <h2>إضافة المتصفح</h2>
+    <p>تفحص الإضافة عنوان الصفحة التي تتصفحها داخل متصفحك لتعرض شارة تحذير. لا تُرسَل العناوين إلى خادمنا إلا إذا اخترت «افحص مع كن واعياً» أو ضغطت بزر الفأرة الأيمن على رابط لفحصه. وفي صفحات نتائج البحث في Google و Bing وDuckDuckGo ترسل الإضافة روابط النتائج (وليس كلمات البحث أبداً) إلى خادمنا لتمييز النتائج الخطرة، ويمكنك إيقاف ذلك من إعدادات الإضافة.</p>
+    <h2>لعبة التحدي</h2>
+    <p>يبقى الاسم الذي تُدخله في تحدي كن واعياً داخل متصفحك لعرض نتيجتك، ولا يُرسَل إلينا أو إلى أي جهة أخرى.</p>
+    <h2>من فضلك لا ترسل</h2>
+    <p>كلمات المرور أو الأرقام السرية أو رموز التحقق (OTP) أو أرقام البطاقات كاملة أو أرقام الهوية. غطّها قبل إرسال لقطة الشاشة.</p>
+    <h2>التواصل</h2>
+    <p>للاستفسار عن الاحتيال: اتصل بالشرطة على 901 (غير طارئ)، وفي الطوارئ: 999. وللاستفسار عن هذه الخدمة، تواصل مع الفريق عبر صفحة المشروع على GitHub (<span dir="ltr">github.com/safiyaalj/be-aware-scam-shield</span>).</p>
+  </section>
+  <footer><a href="/" data-i18n="foot.back">Back to Scam Check</a></footer>
 </main>
 </body>
 </html>

@@ -1,4 +1,5 @@
 import { analyzeUrl, extractUrls, SIGNS } from "./url-analyzer.js";
+import { t, isAr, LANG, brand, flagTitle, flagDetail } from "./i18n.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
@@ -23,15 +24,15 @@ show(location.hash.slice(1));
 
 /* ---------- rendering helpers ---------- */
 const LEVEL_TEXT = {
-  high: ["Likely a scam", "Don't open it. Delete the message."],
-  med: ["Suspicious", "Don't enter details or pay. Go to the official site yourself."],
-  low: ["No obvious red flags", "That doesn't prove it's safe. Stay alert on the page that opens."]
+  high: [t("Likely a scam"), t("Don't open it. Delete the message.")],
+  med: [t("Suspicious"), t("Don't enter details or pay. Go to the official site yourself.")],
+  low: [t("No obvious red flags"), t("That doesn't prove it's safe. Stay alert on the page that opens.")]
 };
-const SEV_TEXT = { high: "High", med: "Medium", low: "Low", good: "Good sign" };
+const SEV_TEXT = { high: t("High"), med: t("Medium"), low: t("Low"), good: t("Good sign") };
 
 function verdictBox(score, level, title, sub) {
   const v = el("div", "verdict"); v.dataset.level = level;
-  const sc = el("div", "score", String(score)); sc.append(el("small", null, "Risk"));
+  const sc = el("div", "score", String(score)); sc.append(el("small", null, t("Risk")));
   const right = el("div"); right.append(el("div", "vtitle", title), el("p", null, sub));
   const m = el("div", "meter"); const mk = el("i"); mk.style.left = score + "%"; m.append(mk); right.append(m);
   v.append(sc, right); return v;
@@ -40,7 +41,7 @@ function flagList(flags) {
   const ul = el("ul", "flags");
   for (const f of flags) {
     const li = el("li", "flag"); li.append(el("span", "sev " + f.sev, SEV_TEXT[f.sev] || f.sev));
-    const d = el("div"); d.append(el("strong", null, f.title), el("p", null, f.detail)); li.append(d); ul.append(li);
+    const d = el("div"); d.append(el("strong", null, flagTitle(f.title)), el("p", null, flagDetail(f.detail))); li.append(d); ul.append(li);
   }
   return ul;
 }
@@ -57,10 +58,16 @@ function anatomy(r) {
   seg(r.pathAndQuery, "path");
   box.append(line);
   const g = el("p", "goes");
-  if (r.expandedFrom) g.append("Short link ", el("b", null, r.expandedFrom), " really goes to ");
-  else g.append("This link really goes to ");
-  g.append(el("b", null, r.parts.reg));
-  if (r.official) g.append(" (" + r.official + ")");
+  const reg = el("b", null, r.parts.reg); reg.dir = "ltr";
+  if (isAr) {
+    if (r.expandedFrom) { const from = el("b", null, r.expandedFrom); from.dir = "ltr"; g.append("الرابط المختصر ", from, " يذهب فعلياً إلى ", reg); }
+    else g.append("هذا الرابط يذهب فعلياً إلى ", reg);
+  } else {
+    if (r.expandedFrom) g.append("Short link ", el("b", null, r.expandedFrom), " really goes to ");
+    else g.append("This link really goes to ");
+    g.append(reg);
+  }
+  if (r.official) g.append(" (" + brand(r.official) + ")");
   box.append(g);
   return box;
 }
@@ -80,11 +87,11 @@ async function checkLink() {
   $("#link-ai-out").replaceChildren();
   const raw = $("#url-in").value;
   const local = analyzeUrl(raw);
-  if (!local) { out.replaceChildren(el("p", "hint", "Paste a link above to check it.")); return; }
-  if (!local.valid) { out.replaceChildren(el("p", "note", "That doesn't look like a web address. Paste the full link, for example https://example.com/page.")); return; }
+  if (!local) { out.replaceChildren(el("p", "hint", t("Paste a link above to check it."))); return; }
+  if (!local.valid) { out.replaceChildren(el("p", "note", t("That doesn't look like a web address. Paste the full link, for example https://example.com/page."))); return; }
 
   const id = ++linkReq;
-  renderLinkResult(out, local, "Checking phishing lists…");
+  renderLinkResult(out, local, t("Checking phishing lists…"));
   try {
     const res = await fetch("/api/check-url", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: raw }) });
     if (id !== linkReq) return;
@@ -92,9 +99,12 @@ async function checkLink() {
     const full = await res.json();
     const sb = full.safeBrowsing, lists = full.phishLists;
     const checked = ["pattern checks", full.model ? "the trained model" : null, lists?.available ? "public phishing lists" : null, sb?.available ? "Google Safe Browsing" : null].filter(Boolean);
-    renderLinkResult(out, full, "Checked with " + checked.join(", ").replace(/, ([^,]*)$/, " and $1") + ".");
+    const names = checked.map(t);
+    renderLinkResult(out, full, isAr
+      ? "تم الفحص باستخدام " + (names.length > 1 ? names.slice(0, -1).join("، ") + " و" + names[names.length - 1] : names[0]) + "."
+      : "Checked with " + names.join(", ").replace(/, ([^,]*)$/, " and $1") + ".");
   } catch {
-    if (id === linkReq) renderLinkResult(out, local, "Online checks are unavailable right now. Showing pattern checks only.");
+    if (id === linkReq) renderLinkResult(out, local, t("Online checks are unavailable right now. Showing pattern checks only."));
   }
 }
 $("#link-form").addEventListener("submit", e => { e.preventDefault(); checkLink(); });
@@ -106,13 +116,13 @@ if (preset) { $("#url-in").value = preset.slice(0, 2048); show("link"); }
 checkLink();
 
 /* ---------- AI ---------- */
-const AI_LEVEL = { scam: ["high", "Likely a scam"], suspicious: ["med", "Suspicious"], likely_safe: ["low", "Probably legitimate"] };
+const AI_LEVEL = { scam: ["high", t("Likely a scam")], suspicious: ["med", t("Suspicious")], likely_safe: ["low", t("Probably legitimate")] };
 const ERRORS = {
-  rate_limited: "Too many checks just now. Please wait a minute and try again.",
-  refused: "This text couldn't be analyzed. Try removing personal details or shortening it.",
-  image_rejected: "That screenshot couldn't be used. Try a PNG or JPG under 5 MB.",
-  empty: "Paste a message or add a screenshot first.",
-  needs_text: "Screenshots can't be read at the moment. Please paste the text of the message instead."
+  rate_limited: t("Too many checks just now. Please wait a minute and try again."),
+  refused: t("This text couldn't be analyzed. Try removing personal details or shortening it."),
+  image_rejected: t("That screenshot couldn't be used. Try a PNG or JPG under 5 MB."),
+  empty: t("Paste a message or add a screenshot first."),
+  needs_text: t("Screenshots can't be read at the moment. Please paste the text of the message instead.")
 };
 
 // Without an AI service the server uses a free on-site model that reads text only.
@@ -120,20 +130,20 @@ fetch("/api/config").then(r => r.json()).then(cfg => {
   if (cfg.engine !== "local") return;
   document.querySelector("#view-link .ai")?.setAttribute("hidden", "");
   $(".drop")?.setAttribute("hidden", "");
-  $("#msg-ai-btn").textContent = "Check message";
+  $("#msg-ai-btn").textContent = t("Check message");
 }).catch(() => {});
 
 function renderAI(box, d) {
   box.replaceChildren();
   const local = d.engine === "local";
   const [lvl, title] = AI_LEVEL[d.verdict] || AI_LEVEL.suspicious;
-  box.append(verdictBox(d.risk, lvl, title + (d.scam_type ? " · " + d.scam_type : ""), local ? "Automatic check" : "AI assessment"));
+  box.append(verdictBox(d.risk, lvl, title + (d.scam_type ? " · " + d.scam_type : ""), local ? t("Automatic check") : t("AI assessment")));
   const p = el("p", "sum", d.summary); p.dir = "auto"; box.append(p);
   if (d.red_flags?.length) {
-    box.append(el("h3", null, "Red flags"));
+    box.append(el("h3", null, t("Red flags")));
     const ul = el("ul", "flags");
     for (const f of d.red_flags.slice(0, 6)) {
-      const li = el("li", "flag"); li.append(el("span", "sev high", "Flag"));
+      const li = el("li", "flag"); li.append(el("span", "sev high", t("Flag")));
       const dv = el("div"); dv.dir = "auto";
       if (f.quote) dv.append(el("span", "quote", "“" + f.quote + "”"));
       dv.append(el("p", null, f.why)); li.append(dv); ul.append(li);
@@ -141,25 +151,25 @@ function renderAI(box, d) {
     box.append(ul);
   }
   if (d.reassuring_signs?.length) {
-    box.append(el("h3", null, "Reassuring signs"));
+    box.append(el("h3", null, t("Reassuring signs")));
     const ul = el("ul", "steps"); ul.dir = "auto"; d.reassuring_signs.slice(0, 4).forEach(g => ul.append(el("li", null, g))); box.append(ul);
   }
   if (d.next_steps?.length) {
-    box.append(el("h3", null, "What to do"));
+    box.append(el("h3", null, t("What to do")));
     const ol = el("ol", "steps"); ol.dir = "auto"; d.next_steps.slice(0, 5).forEach(g => ol.append(el("li", null, g))); box.append(ol);
   }
-  box.append(el("p", "note", (local ? "This automatic check can be wrong, especially with new kinds of scams." : "AI can be wrong.") + " If money or personal details are involved, contact the organization through its official app, website or phone number, or call the police on 901."));
+  box.append(el("p", "note", (local ? t("This automatic check can be wrong, especially with new kinds of scams.") : t("AI can be wrong.")) + t(" If money or personal details are involved, contact the organization through its official app, website or phone number, or call the police on 901.")));
 }
 async function runAI(btn, box, body) {
-  btn.disabled = true; const label = btn.textContent; btn.textContent = "Analyzing…";
-  box.replaceChildren(el("p", "thinking", "Reading it now. This usually takes 10 to 30 seconds."));
+  btn.disabled = true; const label = btn.textContent; btn.textContent = t("Analyzing…");
+  box.replaceChildren(el("p", "thinking", t("Reading it now. This usually takes 10 to 30 seconds.")));
   try {
     const res = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw data;
     renderAI(box, data.analysis);
   } catch (e) {
-    box.replaceChildren(el("p", "note", ERRORS[e?.error] || "The AI check isn't available right now. The pattern checks above still work, or call 901 for advice."));
+    box.replaceChildren(el("p", "note", ERRORS[e?.error] || t("The AI check isn't available right now. The pattern checks above still work, or call 901 for advice.")));
   } finally { btn.disabled = false; btn.textContent = label; }
 }
 $("#link-ai-btn").addEventListener("click", () => {
@@ -169,13 +179,14 @@ $("#link-ai-btn").addEventListener("click", () => {
 });
 
 /* ---------- message ---------- */
+if (isAr && $("#msg-in").value.startsWith("PARCEL NOTICE")) $("#msg-in").value = "إشعار طرد: شحنتك متوقفة بسبب رسوم جمركية غير مدفوعة (7.50 درهم). ادفع خلال 12 ساعة لتجنب إعادتها إلى المرسل: https://uae-post-track.cfd/pay?id=AE2291";
 function quickScan() {
   const t = $("#msg-in").value;
   const tags = $("#qs-tags"); tags.replaceChildren();
-  for (const [name, re] of SIGNS) { const on = re.test(t); tags.append(el("span", "tag" + (on ? " on" : ""), (on ? "● " : "○ ") + name)); }
+  for (const [name, re] of SIGNS) { const on = re.test(t); tags.append(el("span", "tag" + (on ? " on" : ""), (on ? "● " : "○ ") + t(name))); }
   const box = $("#qs-links"); box.replaceChildren();
   const urls = extractUrls(t);
-  if (urls.length) box.append(el("p", "hint", "Links in this message"));
+  if (urls.length) box.append(el("p", "hint", t("Links in this message")));
   for (const raw of urls) {
     const r = analyzeUrl(raw); if (!r || !r.valid) continue;
     const row = el("div", "mini-item"); row.title = raw;
@@ -194,17 +205,18 @@ const fileToBase64 = f => new Promise((resolve, reject) => {
 });
 $("#img-in").addEventListener("change", e => {
   shot = e.target.files?.[0] || null;
-  if (shot && shot.size > 5 * 1024 * 1024) { shot = null; $("#img-in").value = ""; $("#img-name").textContent = "That image is over 5 MB. Try a smaller screenshot."; return; }
-  $("#img-name").textContent = shot ? shot.name : "No screenshot added";
+  if (shot && shot.size > 5 * 1024 * 1024) { shot = null; $("#img-in").value = ""; $("#img-name").textContent = t("That image is over 5 MB. Try a smaller screenshot."); return; }
+  $("#img-name").textContent = shot ? shot.name : t("No screenshot added");
   $("#img-clear").hidden = !shot;
 });
-$("#img-clear").addEventListener("click", () => { shot = null; $("#img-in").value = ""; $("#img-name").textContent = "No screenshot added"; $("#img-clear").hidden = true; });
+$("#img-clear").addEventListener("click", () => { shot = null; $("#img-in").value = ""; $("#img-name").textContent = t("No screenshot added"); $("#img-clear").hidden = true; });
 
 $("#msg-form").addEventListener("submit", async e => {
   e.preventDefault();
   const text = $("#msg-in").value.trim();
   if (!text && !shot) { $("#msg-ai-out").replaceChildren(el("p", "note", ERRORS.empty)); return; }
   const body = { text };
+  if (isAr) body.lang = "ar"; // explain in Arabic even when the message is in English
   if (shot) body.image = { mediaType: shot.type, data: await fileToBase64(shot) };
   runAI($("#msg-ai-btn"), $("#msg-ai-out"), body);
 });

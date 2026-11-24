@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="/assets/logo.png">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fake sites watch | كن واعياً</title>
+<title data-i18n="watch.title">Fake sites watch | كن واعياً</title>
 <meta name="description" content="Websites impersonating UAE organisations, found early from newly registered domains and public phishing lists.">
+<script src="/js/lang.js"></script>
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="/css/app.css">
 <script type="module" src="/js/watch.js"></script>
@@ -17,9 +18,9 @@
   <header class="brand">
     <img class="logo" src="/assets/logo.png" alt="كن واعياً" width="56" height="56">
     <div>
-      <div class="eyebrow"><span lang="ar" dir="rtl">كن واعياً</span> · Be Aware · Fake sites watch</div>
-      <h1>Fake sites copying UAE organisations</h1>
-      <p class="lede">A live list for everyone: websites pretending to be UAE government services, banks, telecoms, couriers and apps. Found early from every newly registered domain (about 70,000 a day) and from public lists of live phishing sites. If a link you received is on this list, don't open it. Organisations and authorities can export the list to have the sites taken down.</p>
+      <div class="eyebrow" data-i18n="watch.eyebrow"><span lang="ar" dir="rtl">كن واعياً</span> · Be Aware · Fake sites watch</div>
+      <h1 data-i18n="watch.h1">Fake sites copying UAE organisations</h1>
+      <p class="lede" data-i18n="watch.lede">A live list for everyone: websites pretending to be UAE government services, banks, telecoms, couriers and apps. Found early from every newly registered domain (about 70,000 a day) and from public lists of live phishing sites. If a link you received is on this list, don't open it. Organisations and authorities can export the list to have the sites taken down.</p>
     </div>
   </header>
 
@@ -27,24 +28,24 @@
 
   <section class="panel">
     <div class="watch-bar">
-      <label>Organisation <select id="f-brand"><option value="">All</option></select></label>
-      <label>Source <select id="f-source"><option value="">All</option><option>Newly registered domain</option><option>Phishing.Database</option><option>OpenPhish</option></select></label>
-      <label>Risk <select id="f-level"><option value="">All</option><option value="high">High only</option><option value="med">Medium and high</option></select></label>
-      <label>Status <select id="f-status"><option value="">All</option><option>new</option><option>reviewed</option><option>reported</option><option>ignored</option></select></label>
+      <label><span data-i18n="watch.f.brand">Organisation</span> <select id="f-brand"><option value="">All</option></select></label>
+      <label><span data-i18n="watch.f.source">Source</span> <select id="f-source"><option value="" data-i18n="watch.all">All</option><option value="Newly registered domain" data-i18n="watch.src.nrd">Newly registered domain</option><option value="Phishing.Database">Phishing.Database</option><option value="OpenPhish">OpenPhish</option></select></label>
+      <label><span data-i18n="watch.f.level">Risk</span> <select id="f-level"><option value="" data-i18n="watch.all">All</option><option value="high" data-i18n="watch.lv.high">High only</option><option value="med" data-i18n="watch.lv.med">Medium and high</option></select></label>
+      <label><span data-i18n="watch.f.status">Status</span> <select id="f-status"><option value="" data-i18n="watch.all">All</option><option value="new" data-i18n="watch.st.new">new</option><option value="reviewed" data-i18n="watch.st.reviewed">reviewed</option><option value="reported" data-i18n="watch.st.reported">reported</option><option value="ignored" data-i18n="watch.st.ignored">ignored</option></select></label>
       <span class="spacer"></span>
-      <a class="btn" href="/api/watch.csv">Export CSV</a>
+      <a class="btn" href="/api/watch.csv" data-i18n="watch.export">Export CSV</a>
     </div>
     <p class="hint" id="runs"></p>
     <div class="table-wrap">
       <table class="watch">
-        <thead><tr><th>Risk</th><th>Website</th><th>Impersonates</th><th>Found by</th><th>Registered</th><th>Why</th><th>Status</th></tr></thead>
-        <tbody id="rows"><tr><td colspan="7" class="hint">Loading…</td></tr></tbody>
+        <thead><tr data-i18n="watch.th"><th>Risk</th><th>Website</th><th>Impersonates</th><th>Found by</th><th>Registered</th><th>Why</th><th>Status</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="7" class="hint" data-i18n="watch.loading">Loading…</td></tr></tbody>
       </table>
     </div>
-    <p class="hint">Website names are shown as text, not links, so nobody opens a scam site by accident. "Check" opens the full analysis. Registration dates come from the domain registries (RDAP); for sites on shared hosting it is the hosting platform's date.</p>
+    <p class="hint" data-i18n="watch.note">Website names are shown as text, not links, so nobody opens a scam site by accident. "Check" opens the full analysis. Registration dates come from the domain registries (RDAP); for sites on shared hosting it is the hosting platform's date.</p>
   </section>
 
-  <footer><a href="/">Back to Scam Check</a></footer>
+  <footer><a href="/" data-i18n="foot.back">Back to Scam Check</a></footer>
 </div>
 </body>
 </html>

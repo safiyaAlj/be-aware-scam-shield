@@ -187,3 +187,16 @@ table.watch{width:100%;border-collapse:collapse;font-size:14px;min-width:820px}
 .explore-card span{font-size:14px;color:var(--muted)}
 .explore-card:hover,.explore-card:focus-visible{border-color:var(--accent)}
 @media (max-width:760px){.explore{grid-template-columns:1fr}}
+/* Language: the button, and Arabic (right-to-left) adjustments. js/lang.js sets <html lang dir>. */
+html.i18n-wait body{visibility:hidden}
+.lang-btn{justify-self:end;border:1px solid var(--line-2);background:var(--field);color:var(--ink);border-radius:999px;padding:5px 14px;font:600 14px/1.4 var(--f-body);cursor:pointer;margin-bottom:-12px}
+.lang-btn:hover{border-color:var(--accent)}
+/* Letter spacing breaks the joins between Arabic letters. */
+html[dir="rtl"] :is(h1,h2,.eyebrow,.sev,.score small,.watch th,.big-num){letter-spacing:0}
+html[dir="rtl"] .eyebrow{text-transform:none}
+/* Web addresses, codes and the risk bar always read left to right. */
+html[dir="rtl"] :is(.input,.anatomy .line,.mini-item span:first-child,.file-name){direction:ltr;unicode-bidi:isolate}
+html[dir="rtl"] .chip{font-family:var(--f-body)}
+.meter{direction:ltr}
+html[dir="rtl"] .anatomy .line{text-align:left}
+html[dir="rtl"] .goes b{unicode-bidi:isolate}

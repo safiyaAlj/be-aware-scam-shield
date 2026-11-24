@@ -85,10 +85,10 @@ const SUMMARY_TAIL = {
  * Same inputs and result shape as analyzeWithClaude(), plus engine: "local".
  * Screenshots can't be read locally; a screenshot with no text is rejected with code "needs_text".
  */
-export async function analyzeLocally({ text = "", image, signs = [], links = [] }) {
+export async function analyzeLocally({ text = "", image, signs = [], links = [], lang: pageLang }) {
   const body = String(text).slice(0, 8000);
   if (!body.trim()) throw new AnalysisError("needs_text", "Screenshots need the AI check; paste the message text instead.");
-  const ar = isArabic(body);
+  const ar = pageLang ? pageLang === "ar" : isArabic(body); // answer in the page's language when it is given
   const lang = ar ? "ar" : "en";
 
   // 1. Trained classifier. Few words means little to go on, so it counts less.

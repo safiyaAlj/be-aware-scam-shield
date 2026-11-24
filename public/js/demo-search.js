@@ -3,13 +3,17 @@
 // installed it sees the titles are already marked and adds nothing. The sample links are never
 // opened: clicking a result explains that; clicking a badge opens the full check.
 
+import { isAr, flagTitle, withLang } from "./i18n.js";
+
 const COLORS = {
   high: { bg: "#E2574F", fg: "#fff" },
   med: { bg: "#E9B250", fg: "#2B2219" },
   low: { bg: "#e7f4ec", fg: "#1f6b3f" },
   wait: { bg: "#ECE4D8", fg: "#2B2219" }
 };
-const TEXT = { high: "Likely scam", med: "Suspicious", low: "No warnings", listed: "Reported phishing site", wait: "Checking…" };
+const TEXT = isAr
+  ? { high: "احتيال محتمل", med: "مشبوه", low: "لا تحذيرات", listed: "موقع تصيد مُبلّغ عنه", wait: "جارٍ الفحص…" }
+  : { high: "Likely scam", med: "Suspicious", low: "No warnings", listed: "Reported phishing site", wait: "Checking…" };
 
 function badge(state, r) {
   const b = document.createElement("span");
@@ -24,10 +28,10 @@ function badge(state, r) {
   const label = r.listed ? TEXT.listed : TEXT[state];
   const icon = state === "high" ? "⛔" : state === "med" ? "⚠" : "✓";
   b.textContent = state === "low" ? `${icon} ${label}` : `${icon} ${label} · ${r.score}`;
-  b.title = `كن واعياً: ${label}${(r.reasons || []).length ? "\n" + r.reasons.join(" · ") : ""}\nClick for the full check`;
+  b.title = `كن واعياً: ${label}${(r.reasons || []).length ? "\n" + r.reasons.map(flagTitle).join(" · ") : ""}\n${isAr ? "اضغط لرؤية الفحص الكامل" : "Click for the full check"}`;
   b.addEventListener("click", e => {
     e.preventDefault(); e.stopPropagation();
-    window.open("/?url=" + encodeURIComponent(r.url) + "#link", "_blank", "noopener");
+    window.open(withLang("/?url=" + encodeURIComponent(r.url) + "#link"), "_blank", "noopener");
   });
   return b;
 }
@@ -56,7 +60,7 @@ document.addEventListener("click", e => {
   const a = e.target.closest?.(".demo-result a");
   if (!a) return;
   e.preventDefault();
-  alert("Demo page: links are disabled. Click the badge to see the full check.");
+  alert(isAr ? "صفحة تجريبية: الروابط معطّلة. اضغط على الشارة لرؤية الفحص الكامل." : "Demo page: links are disabled. Click the badge to see the full check.");
 }, true);
 
 markResults();
